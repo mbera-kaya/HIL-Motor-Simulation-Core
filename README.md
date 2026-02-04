@@ -11,7 +11,7 @@ This project implements a real-time motor behavior emulator on an FPGA using **V
 ## Simulation Results
 The following waveform shows the **20ms** simulation of the motor's response. You can clearly see the linear acceleration ramp when the PWM signal is applied, followed by the steady-state performance at maximum speed.
 
-![Motor Simulation Ramp](docs/simulation_result.png)
+![Motor Simulation Ramp](simulation_result.png)
 
 *The `motor_speed_out` signal follows a precise ramp-up curve, proving the successful emulation of motor inertia.*
 
