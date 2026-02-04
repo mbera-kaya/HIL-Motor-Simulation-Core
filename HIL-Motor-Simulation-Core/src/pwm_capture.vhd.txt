@@ -1,0 +1,45 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity pwm_capture is
+    port (
+        clk         : in  std_logic;
+        resetn      : in  std_logic;
+        pwm_in      : in  std_logic; 
+        duty_cycle  : out unsigned(7 downto 0) 
+    );
+end pwm_capture;
+
+architecture Behavioral of pwm_capture is
+    signal counter : unsigned(15 downto 0) := (others => '0');
+begin
+
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if resetn = '0' then
+                counter <= (others => '0');
+                duty_cycle <= (others => '0');
+            else
+                if pwm_in = '1' then
+                    -- PWM sinyali 1 (HIGH) olduğu sürece sayacı artır
+                    counter <= counter + 1;
+                else
+                    -- PWM sinyali 0 (LOW) olduğu anda ölçümü tamamla
+                    if counter > 0 then
+                        -- Sayacı 8 bite sığdır (CV'deki Robustness/Dayanıklılık maddesi için)
+                        if counter > 255 then
+                            duty_cycle <= to_unsigned(255, 8); -- Maksimum hız sınırı
+                        else
+                            duty_cycle <= counter(7 downto 0);
+                        end if;
+                        
+                        counter <= (others => '0');
+                    end if;
+                end if;
+            end if;
+        end if;
+    end process;
+
+end Behavioral;

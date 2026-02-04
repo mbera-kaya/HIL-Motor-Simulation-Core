@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity hil_top is
+    port (
+        clk             : in  std_logic;
+        resetn          : in  std_logic;
+        pwm_in          : in  std_logic; 
+        motor_speed_out : out unsigned(7 downto 0) 
+    );
+end hil_top;
+
+architecture Behavioral of hil_top is
+
+    signal target_speed_wire : unsigned(7 downto 0);
+
+begin
+
+    u_pwm_capture : entity work.pwm_capture
+        port map (
+            clk        => clk,
+            resetn     => resetn,
+            pwm_in     => pwm_in,
+            duty_cycle => target_speed_wire
+        );
+
+    u_motor_model : entity work.motor_model
+        port map (
+            clk           => clk,
+            resetn        => resetn,
+            target_speed  => target_speed_wire,
+            current_speed => motor_speed_out
+        );
+
+end Behavioral;

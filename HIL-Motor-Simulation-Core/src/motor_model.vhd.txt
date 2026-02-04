@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity motor_model is
+    port (
+        clk             : in  std_logic;
+        resetn          : in  std_logic;
+        target_speed    : in  unsigned(7 downto 0); 
+        current_speed   : out unsigned(7 downto 0)  
+    );
+end motor_model;
+
+architecture Behavioral of motor_model is
+    signal speed_reg : unsigned(15 downto 0) := (others => '0');
+begin
+
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if resetn = '0' then
+                speed_reg <= (others => '0');
+            else
+                if target_speed > speed_reg(15 downto 8) then
+                    speed_reg <= speed_reg + 1; 
+                
+                elsif target_speed < speed_reg(15 downto 8) then
+                    speed_reg <= speed_reg - 1;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    current_speed <= speed_reg(15 downto 8);
+
+end Behavioral;

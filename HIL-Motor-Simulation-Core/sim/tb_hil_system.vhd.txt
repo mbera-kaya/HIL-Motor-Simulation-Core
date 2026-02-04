@@ -1,0 +1,50 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity tb_hil_system is
+end tb_hil_system;
+
+architecture sim of tb_hil_system is
+    signal clk             : std_logic := '0';
+    signal resetn          : std_logic := '0';
+    signal pwm_in          : std_logic := '0';
+    signal motor_speed_out : unsigned(7 downto 0);
+
+    constant clk_period : time := 10 ns;
+
+begin
+
+    uut: entity work.hil_top
+        port map (
+            clk             => clk,
+            resetn          => resetn,
+            pwm_in          => pwm_in,
+            motor_speed_out => motor_speed_out
+        );
+
+    clk_process : process
+    begin
+        clk <= '0'; wait for clk_period/2;
+        clk <= '1'; wait for clk_period/2;
+    end process;
+
+    stim_proc: process
+    begin		
+        resetn <= '0';
+        wait for 100 ns;
+        resetn <= '1';
+        wait for 100 ns;
+
+        pwm_in <= '1';
+        wait for 2 ms; 
+
+        wait for 1 ms;
+
+        pwm_in <= '0';
+        wait for 3 ms; 
+
+        wait; 
+    end process;
+
+end sim;
